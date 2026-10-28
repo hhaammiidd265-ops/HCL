@@ -1,0 +1,1328 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head><base href="https://144901831-atari-embeds.googleusercontent.com/embeds/4c8a3211fd76886a93ab92bca3a50520/inner-frame-minified.html?jsh=m%3B%2F_%2Fscs%2Fabc-static%2F_%2Fjs%2Fk%3Dgapi.lb.en.etOqPKhAhvg.O%2Fd%3D1%2Frs%3DAHpOoo-l5JrVgGKVELwC844E6riBHX86-w%2Fm%3D__features__" target="_blank">
+      <script>
+        (function() {
+          // Listen during capturing phase to intercept before <base target="_blank"> takes effect.
+          document.addEventListener('click', function(e) {
+            // Find the nearest ancestor anchor (handles nested icons, spans, svgs).
+            var el = e.target;
+            var anchor = null;
+            while (el && el !== document) {
+              if (el.tagName && el.tagName.toLowerCase() === 'a') {
+                anchor = el;
+                break;
+              }
+              el = el.parentElement;
+            }
+            if (!anchor) return;
+
+            // Only intercept relative in-page fragment links, not external links with hashes.
+            var href = anchor.getAttribute('href');
+            if (!href) return;
+            href = href.trim();
+            if (!href.startsWith('#')) return;
+
+            // Prevent default <base target="_blank"> navigation to a new blank tab.
+            e.preventDefault();
+            e.stopPropagation();
+
+            // Handle empty anchor or top anchor.
+            if (href === '#' || href === '#top') {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              return;
+            }
+
+            // Resolve target element by id, falling back to legacy name attribute.
+            var targetId = href.slice(1);
+            try {
+              targetId = decodeURIComponent(targetId);
+            } catch (err) {}
+
+            var targetEl = document.getElementById(targetId);
+            if (!targetEl) {
+              try {
+                var escaped = window.CSS && CSS.escape ? CSS.escape(targetId) : targetId.replace(/["\\]/g, '\\$&');
+                targetEl = document.querySelector('[name="' + escaped + '"]');
+              } catch (err) {}
+            }
+
+            // Smoothly scroll to the target within the embed and update URL hash history.
+            if (targetEl) {
+              targetEl.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              if (window.history && window.history.pushState) {
+                window.history.pushState(null, '', href);
+              }
+            }
+          }, true); // useCapture: true is critical to preempt <base target="_blank">
+        })();
+      </script>
+    
+
+
+    <meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=5f341b5f-2b20-42bd-a824-e61c370efc33
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>برنامه مدیریت کارهای روزانه</title>
+    <link href="https://cdn.jsdelivr.net/gh/rastikerdar/vazirmatn@v33.003/Vazirmatn-font-face.css" rel="stylesheet" type="text/css">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+    <style id="theme-variables">
+        :root {
+            --bg-main: #050505;
+            --bg-glow: #000000;
+            --card-bg: #111827;
+            --card-border: #272f3a;
+            --progress-grad-1: #171631;
+            --progress-grad-2: #1a1566;
+            --accent-color: #42405e;
+            --text-main: #fafcff;
+            --text-muted: #9ca3af;
+        }
+    </style>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Vazirmatn', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background-color: var(--bg-main);
+            background-image: radial-gradient(circle at 50% 0%, var(--bg-glow) 0%, var(--bg-main) 70%);
+            color: var(--text-main);
+            min-height: 100vh;
+            padding: 32px 16px 60px;
+            transition: background 0.3s ease, color 0.3s ease;
+            direction: rtl;
+        }
+
+        body.light-mode {
+            --bg-main: #f8fafc;
+            --bg-glow: #e0e7ff;
+            --card-bg: #ffffff;
+            --card-border: #e2e8f0;
+            --progress-grad-1: #4f46e5;
+            --progress-grad-2: #3730a3;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+        }
+
+        .container {
+            max-width: 680px;
+            margin: 0 auto;
+        }
+
+        /* Header */
+        .header {
+            text-align: right;
+            margin-bottom: 24px;
+        }
+
+        .date-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            color: #60a5fa;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 6px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        .greeting {
+            font-size: 1.75rem;
+            font-weight: 800;
+            margin-bottom: 16px;
+            color: var(--text-main);
+        }
+
+        .top-actions {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-new-day {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            color: #fbbf24;
+            padding: 8px 16px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        body.light-mode .btn-new-day {
+            color: #d97706;
+            background: rgba(245, 158, 11, 0.15);
+        }
+        .btn-new-day:hover {
+            background: rgba(245, 158, 11, 0.22);
+            transform: translateY(-1px);
+        }
+
+        .icon-btn {
+            width: 38px;
+            height: 38px;
+            border-radius: 12px;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: 0.2s;
+            font-size: 1.05rem;
+        }
+        .icon-btn:hover {
+            color: var(--text-main);
+            border-color: var(--accent-color);
+        }
+
+        /* Secret Admin Button */
+        .btn-admin-color {
+            display: none;
+            align-items: center;
+            gap: 6px;
+            background: linear-gradient(135deg, #ec4899, #8b5cf6);
+            border: none;
+            color: #fff;
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.85rem;
+            font-weight: 600;
+            cursor: pointer;
+            box-shadow: 0 4px 14px rgba(236, 72, 153, 0.35);
+            transition: 0.2s;
+        }
+        .btn-admin-color.visible {
+            display: inline-flex;
+        }
+        .btn-admin-color:hover {
+            transform: translateY(-1px);
+            opacity: 0.95;
+        }
+
+        /* Admin Customizer Panel */
+        .admin-panel {
+            display: none;
+            background: var(--card-bg);
+            border: 2px solid #8b5cf6;
+            border-radius: 18px;
+            padding: 20px;
+            margin-bottom: 24px;
+            box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
+        }
+        .admin-panel.open {
+            display: block;
+            animation: fadeIn 0.25s ease;
+        }
+        .admin-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--card-border);
+        }
+        .admin-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #c084fc;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .presets-row {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 18px;
+        }
+        .preset-chip {
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: 1px solid var(--card-border);
+            background: rgba(255,255,255,0.05);
+            color: var(--text-main);
+            transition: 0.2s;
+        }
+        .preset-chip:hover {
+            border-color: #c084fc;
+            transform: translateY(-1px);
+        }
+        .color-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
+            gap: 12px;
+            margin-bottom: 18px;
+        }
+        .color-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(0, 0, 0, 0.2);
+            border: 1px solid var(--card-border);
+            padding: 8px 12px;
+            border-radius: 12px;
+        }
+        body.light-mode .color-item {
+            background: rgba(0, 0, 0, 0.03);
+        }
+        .color-item label {
+            font-size: 0.8rem;
+            color: var(--text-main);
+        }
+        .color-item input[type="color"] {
+            -webkit-appearance: none;
+            border: none;
+            width: 32px;
+            height: 32px;
+            border-radius: 8px;
+            cursor: pointer;
+            background: transparent;
+        }
+        .color-item input[type="color"]::-webkit-color-swatch-wrapper {
+            padding: 0;
+        }
+        .color-item input[type="color"]::-webkit-color-swatch {
+            border: 1px solid rgba(255,255,255,0.3);
+            border-radius: 8px;
+        }
+        .admin-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+            padding-top: 12px;
+            border-top: 1px solid var(--card-border);
+        }
+        .admin-btn {
+            padding: 9px 14px;
+            border-radius: 10px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+        }
+        .btn-copy-code {
+            background: #10b981;
+            color: #fff;
+            flex: 1;
+        }
+        .btn-copy-code:hover { background: #059669; }
+        .btn-reset-colors {
+            background: rgba(255, 255, 255, 0.1);
+            color: var(--text-main);
+        }
+        .btn-lock-admin {
+            background: rgba(239, 68, 68, 0.15);
+            color: #f87171;
+            border: 1px solid rgba(239, 68, 68, 0.3);
+        }
+
+        /* Progress Card */
+        .progress-card {
+            background: linear-gradient(135deg, var(--progress-grad-1), var(--progress-grad-2));
+            border: 1px solid rgba(255, 255, 255, 0.12);
+            border-radius: 20px;
+            padding: 22px 24px;
+            margin-bottom: 20px;
+            color: #ffffff;
+            box-shadow: 0 10px 30px -10px rgba(0, 0, 0, 0.5);
+        }
+        .progress-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        .progress-info h2 {
+            font-size: 1.1rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+        .progress-info p {
+            font-size: 0.82rem;
+            color: rgba(255, 255, 255, 0.78);
+        }
+        .progress-numbers {
+            text-align: left;
+        }
+        .progress-percent {
+            font-size: 1.8rem;
+            font-weight: 800;
+            line-height: 1.1;
+        }
+        .progress-count {
+            font-size: 0.75rem;
+            color: rgba(255, 255, 255, 0.75);
+        }
+        .progress-bar-bg {
+            width: 100%;
+            height: 9px;
+            background: rgba(0, 0, 0, 0.35);
+            border-radius: 99px;
+            overflow: hidden;
+        }
+        .progress-bar-fill {
+            height: 100%;
+            width: 0%;
+            background: linear-gradient(90deg, #818cf8, #38bdf8);
+            border-radius: 99px;
+            transition: width 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .celebration-box {
+            display: none;
+            margin-top: 14px;
+            padding-top: 12px;
+            border-top: 1px solid rgba(255, 255, 255, 0.15);
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #fde047;
+        }
+        .celebration-box.show {
+            display: flex;
+        }
+
+        /* Add Task Box */
+        .add-card {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 20px;
+            padding: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 14px;
+        }
+        .input-wrapper {
+            position: relative;
+            flex: 1;
+        }
+        .input-wrapper input {
+            width: 100%;
+            background: rgba(0, 0, 0, 0.25);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 13px 16px;
+            border-radius: 14px;
+            font-size: 0.92rem;
+            outline: none;
+            transition: 0.2s;
+        }
+        body.light-mode .input-wrapper input {
+            background: #f1f5f9;
+        }
+        .input-wrapper input:focus {
+            border-color: var(--accent-color);
+        }
+        .input-wrapper input::placeholder {
+            color: var(--text-muted);
+        }
+        .btn-add {
+            background: var(--accent-color);
+            color: #ffffff;
+            border: none;
+            padding: 0 22px;
+            border-radius: 14px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            transition: 0.2s;
+            white-space: nowrap;
+        }
+        .btn-add:hover {
+            filter: brightness(1.12);
+            transform: translateY(-1px);
+        }
+
+        .category-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        .cat-Selector {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            flex-wrap: wrap;
+        }
+        .cat-label {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-left: 4px;
+        }
+        .cat-pill {
+            background: rgba(255, 255, 255, 0.05);
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 5px 11px;
+            border-radius: 10px;
+            font-size: 0.76rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        body.light-mode .cat-pill {
+            background: #f1f5f9;
+        }
+        .cat-pill.active[data-cat="daily"] {
+            background: #10b981;
+            color: #fff;
+            border-color: #10b981;
+        }
+        .cat-pill.active[data-cat="urgent"] {
+            background: #f43f5e;
+            color: #fff;
+            border-color: #f43f5e;
+        }
+        .cat-pill.active[data-cat="personal"] {
+            background: #3b82f6;
+            color: #fff;
+            border-color: #3b82f6;
+        }
+        .cat-pill.active[data-cat="work"] {
+            background: #f59e0b;
+            color: #fff;
+            border-color: #f59e0b;
+        }
+        .enter-hint {
+            font-size: 0.72rem;
+            color: var(--text-muted);
+        }
+
+        /* Filter Bar */
+        .filter-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        .status-tabs {
+            display: flex;
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            padding: 4px;
+            border-radius: 12px;
+            gap: 4px;
+        }
+        .tab-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 9px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .tab-btn.active {
+            background: rgba(79, 70, 229, 0.2);
+            color: #818cf8;
+        }
+        body.light-mode .tab-btn.active {
+            background: var(--accent-color);
+            color: #fff;
+        }
+        .cat-filter-select {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            color: var(--text-main);
+            padding: 8px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            outline: none;
+            cursor: pointer;
+        }
+
+        /* Task List */
+        .task-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        .task-item {
+            background: var(--card-bg);
+            border: 1px solid var(--card-border);
+            border-radius: 16px;
+            padding: 15px 18px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .task-item:hover {
+            border-color: rgba(99, 102, 241, 0.4);
+            transform: translateY(-1px);
+        }
+        .task-item.completed {
+            opacity: 0.6;
+        }
+        .task-right {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            flex: 1;
+        }
+        .custom-checkbox {
+            width: 22px;
+            height: 22px;
+            border-radius: 7px;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: 0.2s;
+            flex-shrink: 0;
+        }
+        .task-item.completed .custom-checkbox {
+            background: #10b981;
+            border-color: #10b981;
+            color: #fff;
+        }
+        .task-title {
+            font-size: 0.95rem;
+            font-weight: 600;
+            color: var(--text-main);
+            transition: 0.2s;
+        }
+        .task-item.completed .task-title {
+            text-decoration: line-through;
+            color: var(--text-muted);
+        }
+        .badge {
+            font-size: 0.7rem;
+            padding: 3px 9px;
+            border-radius: 8px;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        .badge-daily { background: rgba(16, 185, 129, 0.15); color: #34d399; border: 1px solid rgba(16, 185, 129, 0.3); }
+        .badge-urgent { background: rgba(244, 63, 94, 0.15); color: #fb7185; border: 1px solid rgba(244, 63, 94, 0.3); }
+        .badge-personal { background: rgba(59, 130, 246, 0.15); color: #60a5fa; border: 1px solid rgba(59, 130, 246, 0.3); }
+        .badge-work { background: rgba(245, 158, 11, 0.15); color: #fbbf24; border: 1px solid rgba(245, 158, 11, 0.3); }
+
+        .btn-delete {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            font-size: 1rem;
+            padding: 4px 8px;
+            border-radius: 8px;
+            opacity: 0.5;
+            transition: 0.2s;
+        }
+        .btn-delete:hover {
+            opacity: 1;
+            color: #f43f5e;
+            background: rgba(244, 63, 94, 0.1);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            background: var(--card-bg);
+            border: 1px dashed var(--card-border);
+            border-radius: 18px;
+            color: var(--text-muted);
+        }
+
+        .footer {
+            margin-top: 32px;
+            text-align: center;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 10px;
+        }
+        .btn-restore {
+            background: transparent;
+            border: 1px solid var(--card-border);
+            color: var(--text-muted);
+            padding: 6px 14px;
+            border-radius: 10px;
+            font-size: 0.75rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .btn-restore:hover {
+            color: var(--text-main);
+            border-color: var(--text-muted);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-6px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        @media (max-width: 520px) {
+            .input-row { flex-direction: column; }
+            .btn-add { padding: 12px; justify-content: center; }
+            .enter-hint { display: none; }
+        }
+    </style>
+<style id="dark-reader-style" type="text/css">@media screen {
+html {-webkit-transition : -webkit-filter 300ms linear;}
+}</style></head>
+<body>
+
+<div class="container">
+    <!-- Header -->
+    <div class="header">
+        <div class="date-badge" id="dateBadge" title="تاریخ امروز">
+            <span>📅</span>
+            <span id="persianDate">۱۴۰۵ آبان ۶، چهارشنبه</span>
+        </div>
+        <h1 class="greeting" id="greetingText">عصر بخیر، چطور پیش میره؟ 🌇</h1>
+
+        <div class="top-actions">
+            <button class="btn-new-day" onclick="startNewDay()">
+                <span>☀️</span> شروع روز جدید
+            </button>
+            <button class="icon-btn" id="soundBtn" onclick="toggleSound()" title="صدا">🔊</button>
+            <button class="icon-btn" id="themeBtn" onclick="toggleLightDark()" title="تغییر حالت روز/شب">☀️</button>
+            
+            <!-- دکمه مخفی مخصوص صاحب سایت -->
+            <button class="btn-admin-color" id="adminColorBtn" onclick="toggleAdminPanel()">
+                🎨 تنظیمات رنگ (مدیر)
+            </button>
+        </div>
+    </div>
+
+    <!-- پنل مخفی تغییر رنگ (مخصوص مدیر) -->
+    <div class="admin-panel" id="adminPanel">
+        <div class="admin-header">
+            <div class="admin-title">🎨 پنل شخصی‌سازی رنگ‌ها (مخفی برای بقیه)</div>
+            <button class="icon-btn" onclick="toggleAdminPanel()" style="width:30px;height:30px;">✕</button>
+        </div>
+
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">تم‌های آماده با یک کلیک:</div>
+        <div class="presets-row">
+            <button class="preset-chip" onclick="applyPreset('default')">🌌 سرمه‌ای (اصلی)</button>
+            <button class="preset-chip" onclick="applyPreset('oled')">🖤 مشکی خالص</button>
+            <button class="preset-chip" onclick="applyPreset('emerald')">💚 سبز زمردی</button>
+            <button class="preset-chip" onclick="applyPreset('royal')">👑 بنفش و طلایی</button>
+            <button class="preset-chip" onclick="applyPreset('cyber')">⚡ نئون سایبرپانک</button>
+            <button class="preset-chip" onclick="applyPreset('rose')">🌸 رز تیره</button>
+        </div>
+
+        <div style="font-size:0.8rem; color:var(--text-muted); margin-bottom:8px;">تغییر رنگ تک‌تک بخش‌ها به دلخواه:</div>
+        <div class="color-grid">
+            <div class="color-item">
+                <label>پس‌زمینه اصلی</label>
+                <input type="color" id="col-bg-main" oninput="updateCustomColor('--bg-main', this.value)">
+            </div>
+            <div class="color-item">
+                <label>نور بالای پس‌زمینه</label>
+                <input type="color" id="col-bg-glow" oninput="updateCustomColor('--bg-glow', this.value)">
+            </div>
+            <div class="color-item">
+                <label>رنگ باکس‌ها</label>
+                <input type="color" id="col-card-bg" oninput="updateCustomColor('--card-bg', this.value)">
+            </div>
+            <div class="color-item">
+                <label>خط دور باکس‌ها</label>
+                <input type="color" id="col-card-border" oninput="updateCustomColor('--card-border', this.value)">
+            </div>
+            <div class="color-item">
+                <label>کارت پیشرفت (رنگ ۱)</label>
+                <input type="color" id="col-prog-1" oninput="updateCustomColor('--progress-grad-1', this.value)">
+            </div>
+            <div class="color-item">
+                <label>کارت پیشرفت (رنگ ۲)</label>
+                <input type="color" id="col-prog-2" oninput="updateCustomColor('--progress-grad-2', this.value)">
+            </div>
+            <div class="color-item">
+                <label>رنگ دکمه افزودن</label>
+                <input type="color" id="col-accent" oninput="updateCustomColor('--accent-color', this.value)">
+            </div>
+            <div class="color-item">
+                <label>رنگ نوشته‌ها</label>
+                <input type="color" id="col-text" oninput="updateCustomColor('--text-main', this.value)">
+            </div>
+        </div>
+
+        <div class="admin-actions">
+            <button class="admin-btn btn-copy-code" onclick="copyUpdatedSiteCode()" id="copyCodeBtn">
+                📋 کپی کد نهایی سایت با همین رنگ‌ها
+            </button>
+            <button class="admin-btn btn-reset-colors" onclick="applyPreset('default')">
+                بازگردانی رنگ اولیه
+            </button>
+            <button class="admin-btn btn-lock-admin" onclick="lockAdminMode()">
+                🔒 مخفی کردن دکمه تنظیمات
+            </button>
+        </div>
+    </div>
+
+    <!-- Progress Card -->
+    <div class="progress-card">
+        <div class="progress-top">
+            <div class="progress-info">
+                <h2>پیشرفت کارهای امروز</h2>
+                <p id="progressSubtext">فوق‌العاده بودی! امروز رو ترکوندی 🔥</p>
+            </div>
+            <div class="progress-numbers">
+                <div class="progress-percent" id="progressPercent">۱۰۰٪</div>
+                <div class="progress-count" id="progressCount">۵ از ۵ کار انجام شده</div>
+            </div>
+        </div>
+        <div class="progress-bar-bg">
+            <div class="progress-bar-fill" id="progressBar" style="width: 100%;"></div>
+        </div>
+        <div class="celebration-box show" id="celebrationBox">
+            <span>🎉 ایول! تمام کارهای امروزت رو با موفقیت انجام دادی!</span>
+            <button class="cat-pill" style="color:#fff; border-color:rgba(255,255,255,0.3);" onclick="triggerConfetti()">جشن دوباره 🎊</button>
+        </div>
+    </div>
+
+    <!-- Add Task Card -->
+    <div class="add-card">
+        <div class="input-row">
+            <div class="input-wrapper">
+                <input type="text" id="taskInput" placeholder="✏️ چه کاری می‌خوای انجام بدی؟ (مثلاً: ۳۰ دقیقه مطالعه...)">
+            </div>
+            <button class="btn-add" onclick="addTask()">+ افزودن کار</button>
+        </div>
+        <div class="category-row">
+            <div class="cat-Selector">
+                <span class="cat-label">دسته‌بندی:</span>
+                <button class="cat-pill active" data-cat="daily" onclick="selectCategory('daily')">🔄 روزمره</button>
+                <button class="cat-pill" data-cat="urgent" onclick="selectCategory('urgent')">🔥 مهم و فوری</button>
+                <button class="cat-pill" data-cat="personal" onclick="selectCategory('personal')">👤 شخصی</button>
+                <button class="cat-pill" data-cat="work" onclick="selectCategory('work')">💼 کاری</button>
+            </div>
+            <span class="enter-hint">با زدن کلید Enter هم اضافه می‌شه ↵</span>
+        </div>
+    </div>
+
+    <!-- Filter Bar -->
+    <div class="filter-bar">
+        <div class="status-tabs">
+            <button class="tab-btn active" data-filter="all" onclick="setStatusFilter('all')" id="tabAll">همه ۵</button>
+            <button class="tab-btn" data-filter="pending" onclick="setStatusFilter('pending')" id="tabPending">مانده ۰</button>
+            <button class="tab-btn" data-filter="completed" onclick="setStatusFilter('completed')" id="tabCompleted">انجام‌شده ۵</button>
+        </div>
+        <select class="cat-filter-select" id="catFilterSelect" onchange="renderTasks()">
+            <option value="all">همه دسته‌بندی‌ها</option>
+            <option value="daily">🔄 روزمره</option>
+            <option value="urgent">🔥 مهم و فوری</option>
+            <option value="personal">👤 شخصی</option>
+            <option value="work">💼 کاری</option>
+        </select>
+    </div>
+
+    <!-- Tasks Container -->
+    <div class="task-list" id="taskList">
+                <div class="task-item completed" onclick="toggleTask(1)">
+                    <div class="task-right">
+                        <div class="custom-checkbox">✓</div>
+                        <span class="task-title">نوشتن ۳ اولویت اصلی برای فردا</span>
+                        <span class="badge badge-urgent">🔥 مهم و فوری</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(event, 1)" title="حذف">🗑️</button>
+                </div>
+            
+                <div class="task-item completed" onclick="toggleTask(2)">
+                    <div class="task-right">
+                        <div class="custom-checkbox">✓</div>
+                        <span class="task-title">ورزش و نرمش صبحگاهی (۲۰ دقیقه)</span>
+                        <span class="badge badge-daily">🔄 روزمره</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(event, 2)" title="حذف">🗑️</button>
+                </div>
+            
+                <div class="task-item completed" onclick="toggleTask(3)">
+                    <div class="task-right">
+                        <div class="custom-checkbox">✓</div>
+                        <span class="task-title">مطالعه کتاب یا یادگیری مهارت جدید (۳۰ دقیقه)</span>
+                        <span class="badge badge-daily">🔄 روزمره</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(event, 3)" title="حذف">🗑️</button>
+                </div>
+            
+                <div class="task-item completed" onclick="toggleTask(4)">
+                    <div class="task-right">
+                        <div class="custom-checkbox">✓</div>
+                        <span class="task-title">بررسی و پاسخ به پیام‌ها و ایمیل‌های کاری</span>
+                        <span class="badge badge-work">💼 کاری</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(event, 4)" title="حذف">🗑️</button>
+                </div>
+            
+                <div class="task-item completed" onclick="toggleTask(5)">
+                    <div class="task-right">
+                        <div class="custom-checkbox">✓</div>
+                        <span class="task-title">پیاده‌روی یا استراحت کوتاه بدون گوشی</span>
+                        <span class="badge badge-personal">👤 شخصی</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(event, 5)" title="حذف">🗑️</button>
+                </div>
+            </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <span>اطلاعات شما به صورت خودکار در مرورگر ذخیره می‌شود.</span>
+        <button class="btn-restore" onclick="restoreDefaultTasks()">بازگردانی کارهای پیش‌فرض</button>
+    </div>
+</div>
+
+<script>
+    const defaultTasks = [
+        { id: 1, title: 'نوشتن ۳ اولویت اصلی برای فردا', category: 'urgent', completed: false },
+        { id: 2, title: 'ورزش و نرمش صبحگاهی (۲۰ دقیقه)', category: 'daily', completed: false },
+        { id: 3, title: 'مطالعه کتاب یا یادگیری مهارت جدید (۳۰ دقیقه)', category: 'daily', completed: false },
+        { id: 4, title: 'بررسی و پاسخ به پیام‌ها و ایمیل‌های کاری', category: 'work', completed: false },
+        { id: 5, title: 'پیاده‌روی یا استراحت کوتاه بدون گوشی', category: 'personal', completed: false }
+    ];
+
+    const categoryMeta = {
+        daily: { label: '🔄 روزمره', className: 'badge-daily' },
+        urgent: { label: '🔥 مهم و فوری', className: 'badge-urgent' },
+        personal: { label: '👤 شخصی', className: 'badge-personal' },
+        work: { label: '💼 کاری', className: 'badge-work' }
+    };
+
+    const colorPresets = {
+        default: {
+            '--bg-main': '#060913', '--bg-glow': '#1e1b4b', '--card-bg': '#111827',
+            '--card-border': '#1f2937', '--progress-grad-1': '#312e81', '--progress-grad-2': '#1e1b4b',
+            '--accent-color': '#4f46e5', '--text-main': '#f9fafb'
+        },
+        oled: {
+            '--bg-main': '#000000', '--bg-glow': '#111111', '--card-bg': '#0a0a0a',
+            '--card-border': '#262626', '--progress-grad-1': '#18181b', '--progress-grad-2': '#09090b',
+            '--accent-color': '#6366f1', '--text-main': '#ffffff'
+        },
+        emerald: {
+            '--bg-main': '#02120e', '--bg-glow': '#064e3b', '--card-bg': '#06241d',
+            '--card-border': '#0f3d32', '--progress-grad-1': '#047857', '--progress-grad-2': '#064e3b',
+            '--accent-color': '#10b981', '--text-main': '#ecfdf5'
+        },
+        royal: {
+            '--bg-main': '#0f071e', '--bg-glow': '#3b0764', '--card-bg': '#1a1033',
+            '--card-border': '#311b59', '--progress-grad-1': '#581c87', '--progress-grad-2': '#3b0764',
+            '--accent-color': '#eab308', '--text-main': '#faf5ff'
+        },
+        cyber: {
+            '--bg-main': '#090414', '--bg-glow': '#4a044e', '--card-bg': '#160b29',
+            '--card-border': '#3b0764', '--progress-grad-1': '#be185d', '--progress-grad-2': '#4c1d95',
+            '--accent-color': '#ec4899', '--text-main': '#fdf4ff'
+        },
+        rose: {
+            '--bg-main': '#14050a', '--bg-glow': '#4c0519', '--card-bg': '#240a13',
+            '--card-border': '#3f1121', '--progress-grad-1': '#881337', '--progress-grad-2': '#4c0519',
+            '--accent-color': '#f43f5e', '--text-main': '#fff1f2'
+        }
+    };
+
+    let tasks = JSON.parse(localStorage.getItem('todo_tasks_v1')) || defaultTasks;
+    let selectedCategory = 'daily';
+    let statusFilter = 'all';
+    let soundEnabled = localStorage.getItem('todo_sound') !== 'false';
+    let secretClickCount = 0;
+    let secretClickTimer = null;
+
+    function toPersianNum(num) {
+        return String(num).replace(/\d/g, d => '۰۱۲۳۴۵۶۷۸۹'[d]);
+    }
+
+    function initDateAndGreeting() {
+        try {
+            const now = new Date();
+            const weekday = new Intl.DateTimeFormat('fa-IR', { weekday: 'long' }).format(now);
+            const day = new Intl.DateTimeFormat('fa-IR', { day: 'numeric' }).format(now);
+            const month = new Intl.DateTimeFormat('fa-IR', { month: 'long' }).format(now);
+            const year = new Intl.DateTimeFormat('fa-IR', { year: 'numeric' }).format(now);
+            document.getElementById('persianDate').textContent = `${year} ${month} ${day}، ${weekday}`;
+
+            const hour = now.getHours();
+            const greetingEl = document.getElementById('greetingText');
+            if (hour >= 5 && hour < 12) greetingEl.textContent = 'صبح بخیر، روزت پر از انرژی ☀️';
+            else if (hour >= 12 && hour < 17) greetingEl.textContent = 'ظهر بخیر، خسته نباشی ☕';
+            else if (hour >= 17 && hour < 20) greetingEl.textContent = 'عصر بخیر، چطور پیش میره؟ 🌇';
+            else greetingEl.textContent = 'شب بخیر، وقت جمع‌بندی روزه 🌙';
+        } catch (e) {
+            document.getElementById('persianDate').textContent = 'برنامه روزانه من';
+        }
+    }
+
+    // Secret 5 clicks on date to unlock Admin Color Panel
+    document.getElementById('dateBadge').addEventListener('click', () => {
+        secretClickCount++;
+        clearTimeout(secretClickTimer);
+        if (secretClickCount >= 5) {
+            secretClickCount = 0;
+            unlockAdminMode();
+        } else {
+            secretClickTimer = setTimeout(() => { secretClickCount = 0; }, 1500);
+        }
+    });
+
+    function unlockAdminMode() {
+        localStorage.setItem('todo_admin_unlocked', 'true');
+        document.getElementById('adminColorBtn').classList.add('visible');
+        document.getElementById('adminPanel').classList.add('open');
+        syncColorInputsWithCSS();
+    }
+
+    function lockAdminMode() {
+        localStorage.removeItem('todo_admin_unlocked');
+        document.getElementById('adminColorBtn').classList.remove('visible');
+        document.getElementById('adminPanel').classList.remove('open');
+    }
+
+    function toggleAdminPanel() {
+        document.getElementById('adminPanel').classList.toggle('open');
+        syncColorInputsWithCSS();
+    }
+
+    function updateCustomColor(varName, value) {
+        document.documentElement.style.setProperty(varName, value);
+        const savedColors = JSON.parse(localStorage.getItem('todo_custom_colors') || '{}');
+        savedColors[varName] = value;
+        localStorage.setItem('todo_custom_colors', JSON.stringify(savedColors));
+    }
+
+    function applyPreset(presetName) {
+        const preset = colorPresets[presetName];
+        if (!preset) return;
+        Object.keys(preset).forEach(varName => {
+            document.documentElement.style.setProperty(varName, preset[varName]);
+        });
+        localStorage.setItem('todo_custom_colors', JSON.stringify(preset));
+        syncColorInputsWithCSS();
+    }
+
+    function loadSavedColors() {
+        const savedColors = JSON.parse(localStorage.getItem('todo_custom_colors') || '{}');
+        Object.keys(savedColors).forEach(varName => {
+            document.documentElement.style.setProperty(varName, savedColors[varName]);
+        });
+        if (localStorage.getItem('todo_admin_unlocked') === 'true') {
+            document.getElementById('adminColorBtn').classList.add('visible');
+        }
+    }
+
+    function syncColorInputsWithCSS() {
+        const styles = getComputedStyle(document.documentElement);
+        const map = {
+            'col-bg-main': '--bg-main',
+            'col-bg-glow': '--bg-glow',
+            'col-card-bg': '--card-bg',
+            'col-card-border': '--card-border',
+            'col-prog-1': '--progress-grad-1',
+            'col-prog-2': '--progress-grad-2',
+            'col-accent': '--accent-color',
+            'col-text': '--text-main'
+        };
+        Object.keys(map).forEach(inputId => {
+            const val = styles.getPropertyValue(map[inputId]).trim();
+            if (val.startsWith('#')) {
+                document.getElementById(inputId).value = val;
+            }
+        });
+    }
+
+    function copyUpdatedSiteCode() {
+        const styles = getComputedStyle(document.documentElement);
+        const vars = ['--bg-main', '--bg-glow', '--card-bg', '--card-border', '--progress-grad-1', '--progress-grad-2', '--accent-color', '--text-main', '--text-muted'];
+        let newRootCSS = `\n        :root {\n`;
+        vars.forEach(v => {
+            newRootCSS += `            ${v}: ${styles.getPropertyValue(v).trim()};\n`;
+        });
+        newRootCSS += `        }\n    `;
+
+        const clone = document.documentElement.cloneNode(true);
+        clone.querySelector('#theme-variables').innerHTML = newRootCSS;
+        const adminBtn = clone.querySelector('#adminColorBtn');
+        const adminPnl = clone.querySelector('#adminPanel');
+        if (adminBtn) adminBtn.classList.remove('visible');
+        if (adminPnl) adminPnl.classList.remove('open');
+
+        const fullHTML = '<!DOCTYPE html>\n<html lang="fa" dir="rtl">\n' + clone.innerHTML + '\n</html>';
+
+        // روش امن و سازگار با آی‌فریم گوگل‌سایت
+        const textarea = document.createElement('textarea');
+        textarea.value = fullHTML;
+        document.body.appendChild(textarea);
+        textarea.select();
+        try {
+            document.execCommand('copy');
+            document.body.removeChild(textarea);
+            const btn = document.getElementById('copyCodeBtn');
+            const oldText = btn.textContent;
+            btn.textContent = '✅ کپی شد! حالا توی گوگل‌سایت جایگزین کن';
+            setTimeout(() => { btn.textContent = oldText; }, 3000);
+        } catch (err) {
+            document.body.removeChild(textarea);
+            prompt('مرورگر اجازه کپی خودکار را نداد. لطفاً کد زیر را کپی کنید:', fullHTML);
+        }
+    }
+
+    function playCheckSound() {
+        if (!soundEnabled) return;
+        try {
+            const ctx = new (window.AudioContext || window.webkitAudioContext)();
+            const osc = ctx.createOscillator();
+            const gain = ctx.createGain();
+            osc.type = 'sine';
+            osc.frequency.setValueAtTime(520, ctx.currentTime);
+            osc.frequency.exponentialRampToValueAtTime(880, ctx.currentTime + 0.12);
+            gain.gain.setValueAtTime(0.15, ctx.currentTime);
+            gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + 0.15);
+            osc.connect(gain);
+            gain.connect(ctx.destination);
+            osc.start();
+            osc.stop(ctx.currentTime + 0.15);
+        } catch (e) {}
+    }
+
+    function toggleSound() {
+        soundEnabled = !soundEnabled;
+        localStorage.setItem('todo_sound', soundEnabled);
+        document.getElementById('soundBtn').textContent = soundEnabled ? '🔊' : '🔇';
+    }
+
+    function toggleLightDark() {
+        document.body.classList.toggle('light-mode');
+        const isLight = document.body.classList.contains('light-mode');
+        document.getElementById('themeBtn').textContent = isLight ? '🌙' : '☀️';
+    }
+
+    function selectCategory(cat) {
+        selectedCategory = cat;
+        document.querySelectorAll('.cat-pill[data-cat]').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.cat === cat);
+        });
+    }
+
+    function setStatusFilter(filter) {
+        statusFilter = filter;
+        document.querySelectorAll('.tab-btn').forEach(btn => {
+            btn.classList.toggle('active', btn.dataset.filter === filter);
+        });
+        renderTasks();
+    }
+
+    function addTask() {
+        const input = document.getElementById('taskInput');
+        const val = input.value.trim();
+        if (!val) return;
+
+        // بررسی رمز مخفی برای باز کردن پنل رنگ
+        if (val === 'hamid1405') {
+            input.value = '';
+            unlockAdminMode();
+            return;
+        }
+
+        tasks.unshift({
+            id: Date.now(),
+            title: val,
+            category: selectedCategory,
+            completed: false
+        });
+        input.value = '';
+        saveAndRender();
+    }
+
+    document.getElementById('taskInput').addEventListener('keydown', e => {
+        if (e.key === 'Enter') addTask();
+    });
+
+    function toggleTask(id) {
+        const t = tasks.find(item => item.id === id);
+        if (!t) return;
+        t.completed = !t.completed;
+        if (t.completed) playCheckSound();
+        saveAndRender();
+
+        const completedCount = tasks.filter(i => i.completed).length;
+        if (tasks.length > 0 && completedCount === tasks.length && t.completed) {
+            triggerConfetti();
+        }
+    }
+
+    function deleteTask(e, id) {
+        e.stopPropagation();
+        tasks = tasks.filter(item => item.id !== id);
+        saveAndRender();
+    }
+
+    function startNewDay() {
+        tasks.forEach(t => { t.completed = false; });
+        saveAndRender();
+    }
+
+    function restoreDefaultTasks() {
+        tasks = JSON.parse(JSON.stringify(defaultTasks));
+        saveAndRender();
+    }
+
+    function triggerConfetti() {
+        if (typeof confetti === 'function') {
+            confetti({ particleCount: 90, spread: 70, origin: { y: 0.6 } });
+        }
+    }
+
+    function saveAndRender() {
+        localStorage.setItem('todo_tasks_v1', JSON.stringify(tasks));
+        renderTasks();
+    }
+
+    function renderTasks() {
+        const listEl = document.getElementById('taskList');
+        const catFilter = document.getElementById('catFilterSelect').value;
+
+        const total = tasks.length;
+        const completed = tasks.filter(t => t.completed).length;
+        const pending = total - completed;
+        const percent = total === 0 ? 0 : Math.round((completed / total) * 100);
+
+        document.getElementById('progressPercent').textContent = `${toPersianNum(percent)}٪`;
+        document.getElementById('progressCount').textContent = `${toPersianNum(completed)} از ${toPersianNum(total)} کار انجام شده`;
+        document.getElementById('progressBar').style.width = `${percent}%`;
+
+        document.getElementById('tabAll').textContent = `همه ${toPersianNum(total)}`;
+        document.getElementById('tabPending').textContent = `مانده ${toPersianNum(pending)}`;
+        document.getElementById('tabCompleted').textContent = `انجام‌شده ${toPersianNum(completed)}`;
+
+        const celBox = document.getElementById('celebrationBox');
+        if (total > 0 && completed === total) {
+            celBox.classList.add('show');
+            document.getElementById('progressSubtext').textContent = 'فوق‌العاده بودی! امروز رو ترکوندی 🔥';
+        } else {
+            celBox.classList.remove('show');
+            document.getElementById('progressSubtext').textContent = completed === 0
+                ? 'بزن بریم! با اولین تیک انرژی بگیر 💪'
+                : 'عالیه، به همین فرمون ادامه بده 🚀';
+        }
+
+        const filtered = tasks.filter(t => {
+            if (statusFilter === 'pending' && t.completed) return false;
+            if (statusFilter === 'completed' && !t.completed) return false;
+            if (catFilter !== 'all' && t.category !== catFilter) return false;
+            return true;
+        });
+
+        if (filtered.length === 0) {
+            listEl.innerHTML = `<div class="empty-state">هیچ کاری در این بخش نیست!</div>`;
+            return;
+        }
+
+        listEl.innerHTML = filtered.map(t => {
+            const cat = categoryMeta[t.category] || categoryMeta.daily;
+            return `
+                <div class="task-item ${t.completed ? 'completed' : ''}" onclick="toggleTask(${t.id})">
+                    <div class="task-right">
+                        <div class="custom-checkbox">${t.completed ? '✓' : ''}</div>
+                        <span class="task-title">${t.title}</span>
+                        <span class="badge ${cat.className}">${cat.label}</span>
+                    </div>
+                    <button class="btn-delete" onclick="deleteTask(event, ${t.id})" title="حذف">🗑️</button>
+                </div>
+            `;
+        }).join('');
+    }
+
+    // اجرای اولیه
+    loadSavedColors();
+    initDateAndGreeting();
+    document.getElementById('soundBtn').textContent = soundEnabled ? '🔊' : '🔇';
+    renderTasks();
+</script>
+
+
+      <script>
+        (function() {
+          // The root element's background fills the whole page. As in CSS,
+          // the body's background is used when the root element has none.
+          function getPageBackgroundColor() {
+            var docStyle = window.getComputedStyle(document.documentElement);
+            var color = docStyle.backgroundColor;
+            if ((color === 'rgba(0, 0, 0, 0)' || color === 'transparent') &&
+                docStyle.backgroundImage === 'none' && document.body) {
+              color = window.getComputedStyle(document.body).backgroundColor;
+            }
+            return color || '';
+          }
+
+          var lastReportedColor = '';
+          function reportBackgroundColor() {
+            try {
+              var color = getPageBackgroundColor();
+              if (color === lastReportedColor) return;
+              lastReportedColor = color;
+              window.parent.postMessage({
+                type: 'ATARI_CODE_EMBED_BACKGROUND_COLOR',
+                backgroundColor: color
+              }, '*');
+            } catch (e) {}
+          }
+
+          // The page background usually changes through an attribute on html
+          // or body (for example a theme class), a style sheet in head, or the
+          // system color scheme.
+          if (typeof MutationObserver !== 'undefined') {
+            var observer = new MutationObserver(reportBackgroundColor);
+            observer.observe(document.documentElement, {attributes: true});
+            if (document.body) {
+              observer.observe(document.body, {attributes: true});
+            }
+            if (document.head) {
+              observer.observe(document.head, {
+                attributes: true,
+                childList: true,
+                subtree: true,
+                characterData: true
+              });
+            }
+          }
+          var colorSchemeQuery =
+              window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)');
+          if (colorSchemeQuery && colorSchemeQuery.addEventListener) {
+            colorSchemeQuery.addEventListener('change', reportBackgroundColor);
+          }
+          window.addEventListener('load', reportBackgroundColor);
+          window.addEventListener('transitionend', reportBackgroundColor);
+          window.addEventListener('animationend', reportBackgroundColor);
+          reportBackgroundColor();
+        })();
+      </script>
+    
+<script async="" src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="5f341b5f-2b20-42bd-a824-e61c370efc33" data-app-host="app.netlify.com" data-account-tier="free"></script>
+</body>
+</html>
